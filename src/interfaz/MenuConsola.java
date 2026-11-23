@@ -1,6 +1,8 @@
 package interfaz;
 
+import modelo.Gasto;
 import modelo.Ingreso;
+import negocio.GestorGastos;
 import negocio.GestorIngresos;
 
 import java.time.LocalDate;
@@ -8,9 +10,13 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class MenuConsola {
     private static final Scanner scanner = new Scanner(System.in);
     private static final GestorIngresos gestorIngresos = new GestorIngresos();
+    private static final GestorGastos gestorGastos = new GestorGastos();
 
     public static void main(String[] args) {
         int opcion = -1;
@@ -117,5 +123,15 @@ public class MenuConsola {
                 System.out.println("Validación: " + e.getMessage());
             }
         }
+    }
+    private static double obtenerLimiteConsumoB(int mes, int anio) {
+        double ingresoTotal = gestorIngresos.calcularIngresoTotal(mes, anio);
+        if (ingresoTotal <= 0) {
+            return 0.0;
+        }
+        double necesidades = Math.round(ingresoTotal * 0.50 * 100.0) / 100.0;
+        double deseos = Math.round(ingresoTotal * 0.30 * 100.0) / 100.0;
+        double ahorro = Math.round((ingresoTotal - necesidades - deseos) * 100.0) / 100.0;
+        return Math.round((ingresoTotal - ahorro) * 100.0) / 100.0;
     }
 }
